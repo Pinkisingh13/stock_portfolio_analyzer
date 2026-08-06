@@ -1,0 +1,326 @@
+
+Numpy (Numerical Python) is an open source python library widely used in schience and engineering. Library for working with arrays (grids of numbers) and doing math on them faster. Numpy stores only homogenous type of data, means the type of the data will be same, unlike python list. and hence because of this it has capability to perform calculation faster, reduse memory consumption because it does not need to perform. data type checking. 
+
+---------------------------------------------
+
+Core Concepts:
+
+1. Scalar — a single number
+import numpy as np
+
+price = 1250.50  # scalar — just one number
+
+---------------------------------------------
+
+2. Vector — a 1D array (a list of numbers)
+
+prices = np.array([1250, 1260, 1255, 1270, 1265])  # vector — 5 numbers in a row
+# Think of it as: one row of stock prices over 5 days
+
+---------------------------------------------
+
+3. Matrix — a 2D array (rows and columns, like a table)
+
+stock_data = np.array([
+    [1250, 1260, 1255, 1270, 1265],  # RELIANCE prices
+    [3100, 3150, 3120, 3180, 3160],  # TCS prices
+    [1500, 1520, 1510, 1540, 1530]   # INFY prices
+])
+# 3 rows (stocks) × 5 columns (days)
+# This is a matrix: 3x5
+
+---------------------------------------------
+
+4. Tensor — a 3D+ array (multiple matrices stacked)
+
+# Example: Stock prices across multiple years
+# [Year 1 matrix, Year 2 matrix, Year 3 matrix]
+# You won't use this much in finance — it's more for deep learning
+
+---------------------------------------------
+
+
+Why NumPy > Python Lists
+
+# Python list (slow)
+prices = [1250, 1260, 1255, 1270, 1265]
+doubled = [x * 2 for x in prices]  # must loop
+
+# NumPy array (fast)
+prices = np.array([1250, 1260, 1255, 1270, 1265])
+doubled = prices * 2  # operates on ALL at once
+
+NumPy does "vectorized operations" — operates on entire arrays at once, no loops needed.
+
+----------------------------------------------------------------------------
+
+
+# Why NumPy is Faster than Python Lists
+
+## The Core Difference
+
+**Python List:**
+- Can hold mixed types: [1, "hello", 3.14, True]
+- Each element is a full Python object with type info, reference count, etc.
+- Stored in different memory locations (scattered)
+- Operations require Python interpreter for each element
+
+**NumPy Array:**
+- Must be same type: [1, 2, 3, 4, 5] (all integers)
+- Elements are raw values packed tightly in one memory block
+- Stored in continuous memory (contiguous)
+- Operations use compiled C code (not Python interpreter)
+
+---
+
+## Why This Makes NumPy Fast
+
+### 1. Memory Layout
+
+**Python List:**
+```
+Memory: [ptr] -> [object 1] ... [ptr] -> [object 2] ... [ptr] -> [object 3]
+         ↑                        ↑                        ↑
+      scattered across RAM
+```
+
+**NumPy Array:**
+```
+Memory: [1][2][3][4][5] <- all together in one block
+```
+
+When CPU reads data, it loads chunks from RAM. NumPy's continuous layout means:
+- One memory fetch gets multiple numbers
+- Python list needs separate fetch for each
+
+---
+
+### 2. Type Checking
+
+**Python List:**
+```python
+prices = [1250, 1260, 1255]
+doubled = [x * 2 for x in prices]
+```
+
+For EACH element:
+- Check: "Is x a number?"
+- Check: "Can I multiply it?"
+- Call Python's multiplication function
+- Wrap result back into Python object
+
+**NumPy Array:**
+```python
+prices = np.array([1250, 1260, 1255])
+doubled = prices * 2
+```
+
+NumPy knows: "This is an array of integers"
+- No type checking per element (checked once at creation)
+- Direct CPU instruction: multiply all values
+- Written in C (compiled, not interpreted)
+
+---
+
+### 3. Vectorization (SIMD)
+
+**Python:** Loops through each element one by one
+```python
+for i in range(len(prices)):
+    result[i] = prices[i] * 2
+# Process: 1 → 2 → 3 → 4 → 5 (sequential)
+```
+
+**NumPy:** Uses SIMD (Single Instruction, Multiple Data)
+```python
+result = prices * 2
+# Process: [1,2,3,4,5] → [2,4,6,8,10] (all at once)
+```
+
+Modern CPUs can do math on 4-8 numbers simultaneously. NumPy uses this. Python lists don't.
+
+---
+
+### 4. No Interpreter Overhead
+
+**Python List:**
+```
+Python code → Python interpreter → executes
+(slow - interpreter translates each line at runtime)
+```
+
+**NumPy:**
+```
+Python code → NumPy (written in C) → CPU
+(fast - C is compiled, runs directly on CPU)
+```
+
+---
+
+## Real Example
+
+```python
+import numpy as np
+import time
+
+# Python list
+start = time.time()
+prices_list = list(range(1000000))
+doubled_list = [x * 2 for x in prices_list]
+print(f"Python list: {time.time() - start:.4f}s")
+
+# NumPy array
+start = time.time()
+prices_array = np.arange(1000000)
+doubled_array = prices_array * 2
+print(f"NumPy array: {time.time() - start:.4f}s")
+```
+
+**Result:**
+- Python list: ~0.08 seconds
+- NumPy array: ~0.002 seconds
+
+**NumPy is 40x faster!**
+
+---
+
+## When to Use Which
+
+**Use Python Lists:**
+- Mixed types: [1, "RELIANCE", 3.14, True]
+- Small data (< 100 elements)
+- Need to append/remove frequently
+- Don't need math operations
+
+**Use NumPy Arrays:**
+- Same type: all numbers
+- Large data (1000+ elements)
+- Need math: sum, average, multiply, etc.
+- Performance matters
+
+---
+
+## Key Takeaway
+
+**Python lists = flexible but slow**
+- Can hold anything
+- Scattered in memory
+- Interpreted Python code
+
+**NumPy arrays = fast but strict**
+- One type only
+- Continuous memory
+- Compiled C code + CPU optimizations
+
+For finance (calculating on thousands of stock prices), NumPy is the obvious choice.
+
+
+---------------------------------------------
+
+standard deviatiation: how far prices are from its average. if its samll it means average is near to its values. far means the prices are flutates so much and not near with the mean average. Higher Standard Deviation = Higher Volatility = Higher Risk
+
+Low std dev = stable/safe — price doesn't move much
+High std dev = volatile/risky — price swings wildly
+
+
+---------------------------------------------
+
+## CALCULATING STANDARD DEVIATION (VOLATILITY) - STEP BY STEP
+
+### What You're Calculating:
+How risky a stock is by measuring how much its price jumps around.
+
+### The Process (5 Steps):
+
+**Step 1: Get Closing Prices**
+```python
+closing_data = [100, 110, 105, 120, 115]
+```
+These are the stock's closing prices over 5 days.
+
+---
+
+**Step 2: Calculate Daily Returns**
+How much did the price change each day (as a percentage)?
+
+```python
+daily_returns = []
+for i in range(1, len(closing_data)):
+    yesterday = closing_data[i-1]
+    today = closing_data[i]
+    daily_return = (today - yesterday) / yesterday * 100
+    daily_returns.append(daily_return)
+```
+
+Result: `daily_returns = [10, -4.54, 14.29, -4.17]` (in %)
+
+Why we do this: We care about % change, not absolute price change.
+
+---
+
+**Step 3: Find the Mean (Average) of Daily Returns**
+```python
+average = np.mean(daily_returns)
+# Or manually: sum(daily_returns) / len(daily_returns)
+```
+
+Result: `average = 3.89%`
+
+Why: We need a "center point" to see how far each return deviates from it.
+
+---
+
+**Step 4: Calculate Variance**
+Variance = average of squared differences from the mean.
+
+```python
+difference = []
+for i in daily_returns:
+    difference.append(i - average)
+
+squared = np.square(difference)
+variance = np.sum(squared) / len(squared)
+```
+
+Breaking it down:
+- `difference = [6.11, -8.43, 10.4, -8.06]` — how far each return is from average
+- `squared = [37.33, 71.06, 108.16, 64.96]` — square them (makes all positive)
+- `variance = 70.38` — average of those squares
+
+Why square: Removes negative signs (a -5% swing is as risky as +5%) and amplifies big swings.
+
+---
+
+**Step 5: Take Square Root = Standard Deviation**
+```python
+volatility = np.sqrt(variance)
+```
+
+Result: `volatility = 8.39%`
+
+Why square root: Variance is in "squared %" units. Square root brings it back to normal % units.
+
+---
+
+### One-Line NumPy Way
+All of the above in one line:
+```python
+volatility = np.std(daily_returns)
+```
+
+`np.std()` does steps 3-5 automatically.
+
+---
+
+### What the Number Means
+
+`volatility = 8.39%` means:
+- On average, this stock's daily returns vary by ±8.39% from the mean
+- Higher volatility = more risk = price swings wildly
+- Lower volatility = more stable = safer
+
+### Real Example Results (from your code):
+- ICICI: 1.05% volatility → most stable
+- TCS: 2.15% volatility → most volatile
+
+Investors use this to compare risk across stocks.
