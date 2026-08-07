@@ -1,0 +1,13 @@
+
+
+
+pandas is a Python package that provides fast, flexible, and expressive data structures designed to make working with “relational” or “labeled” data both easy and intuitive. It aims to be the fundamental high-level building block for Python’s practical, real-world data analysis. Additionally, it seeks to become the most powerful and flexible open source data analysis/manipulation tool available in any language. It is already well on its way toward this goal.
+
+
+- The two primary data structures of pandas, Series (1-dimensional) and DataFrame (2-dimensional)
+
+- all columns in a Pandas DataFrame must have the same number of rows.
+
+- loc and iloc are two ways to select data from a Pandas DataFrame.
+- loc is INCLUSIVE of the stop value.  [start:stop:step]
+- iloc EXCLUSIVE of stop, like normal Python. iloc[start:stop:step]

@@ -1,47 +1,54 @@
 import yfinance as yf
 import pandas as pd
 import numpy as np
-import matplotlib as mp
+import matplotlib.pyplot as mp
 
 
-list_of_stocks = ["RELIANCE.NS", "TCS.NS", "VEDL.NS", "HDFCBANK.NS", "ICICIBANK.NS"]
-
-results = {}
+list_of_stocks = ["SBIN.NS", "ICICIBANK.NS", "AXISBANK.NS", "HDFCBANK.NS", "PNB.NS"]
+volatility = []
+dat = []
+colors = ["blue", "green", "red", "orange", "purple"]
 
 def getreturns():
- for symbol in list_of_stocks:
-    stocks = yf.Ticker(symbol)
-    data = stocks.history(period="1mo")
-    closing_data = data["Close"].values
-    first_price = closing_data[0]
-    last_price = closing_data[-1]
-    monthly_return = (last_price - first_price) / first_price * 100
-    # print(closing_data)
-    # print(monthly_return)
-    check_volatility(closing_data)
-    
+    for symbol in list_of_stocks:
+        stocks = yf.Ticker(symbol)
+        data = stocks.history(period="1mo")
+        data["Stock Name"] = symbol
+        data["Daily Return"] = data["Close"].pct_change() * 100
+        vol = data["Daily Return"].std()
+        volatility.append(vol)
+        dat.append(data)
+        print(dat)
+  
 
-def check_volatility(cl_value):
-    daily_returns = []
-    difference = []
-    squared = []
-    sum_of_square = 0
-    for i in range(1, len(cl_value)):
-        yesterday = cl_value[i-1]
-        today = cl_value[i]
-        daily_return = (today - yesterday) / yesterday * 100
-        daily_returns.append(daily_return)
-    average = np.mean(daily_returns)
-    # print(average)
-    
-    for i in daily_returns:
-       difference.append(i - average)
-    #    print(difference)
-    squared = np.square(difference)
-    sum_of_square = np.sum(squared) / (len(squared)-1)
-    #    print(squared)
-    # print(sum_of_square)
-    volatality = np.sqrt(sum_of_square)
-    print(volatality)
+def plot_daily_returns():
+    for s, n, cl in zip(dat, list_of_stocks, colors):
+        mp.plot(s.index, s["Daily Return"], color=cl, label=n.split(".")[0])
+
+    mp.title("Daily Returns Comparison")
+    mp.xlabel("Date")
+    mp.ylabel("Daily Return (%)")
+    mp.legend()
+    mp.grid(True, alpha=0.3)
+    mp.axhline(y=0, color='black', linestyle='--', linewidth=0.5)
+    mp.tight_layout()
+    mp.savefig("daily_returns.png", dpi=300, bbox_inches="tight")
+    mp.show()
+
+def plot_volatility_chart():
+    stock_names_clean = [s.replace(".NS", "") for s in list_of_stocks]
+
+    mp.bar(stock_names_clean, volatility, color=colors)
+    mp.title("Stock Volatility Comparison")
+    mp.xlabel("Stock")
+    mp.ylabel("Daily Volatility (%)")
+    mp.grid(True, alpha=0.3)
+    mp.tight_layout()
+    mp.savefig("stock_volatility.png", dpi=300, bbox_inches="tight")
+    mp.show()
+
 
 getreturns()
+plot_daily_returns()
+plot_volatility_chart()
+

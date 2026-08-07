@@ -1,0 +1,159 @@
+Simple Rate Of Return = daily_return = (today - yesterday) / yesterday 
+Lograthmic Rate of Returns: calculate return using log()
+
+Price answers: "How much is the stock worth?"
+Daily return answers: "How much did my investment change today?"
+Standard deviation of returns answers: "How unpredictable are those daily changes?"
+
+Mean of prices → Average price.
+Mean of returns → Average daily gain/loss.
+Standard deviation of returns → Volatility.
+
+
+Daily Return (%) → What happened on one specific day.
+Standard Deviation (%) → A summary of how much the daily returns fluctuate over many days.
+
+
+
+
+
+------------------------------------------------------------------------------------------------
+
+
+Why investors use standard deviation (one number):
+Your output:
+
+1.32  ← RELIANCE
+1.20  ← TCS (safest)
+1.67  ← VEDL (riskiest)
+1.45  ← HDFC
+1.57  ← ICICI
+In 2 seconds, you know: VEDL is the riskiest, TCS is the safest.
+
+Compare to looking at the chart:
+You'd have to:
+
+Stare at all the lines
+Count how many big spikes each has
+Estimate which moves more
+Still not be 100% sure
+Standard deviation does this calculation for you instantly.
+
+Real investor scenarios:
+Scenario 1: Quick comparison
+Investor: "I want a safe bank stock."
+
+With std dev:
+
+
+HDFC: 1.45% volatility
+ICICI: 1.57% volatility
+Answer: HDFC is safer. Decision made in 3 seconds.
+
+Without std dev:
+Look at 20 days of daily returns, manually compare... 10 minutes.
+
+Scenario 2: Portfolio construction
+Investor has ₹1,00,000 to invest. Wants 60% safe, 40% risky.
+
+With std dev:
+
+
+Safe (< 1.5%): TCS, RELIANCE, HDFC
+Risky (> 1.5%): VEDL, ICICI
+Allocate: ₹60k to safe group, ₹40k to risky group.
+
+Without std dev: No clear way to classify stocks as "safe" or "risky."
+
+Scenario 3: Risk-adjusted returns (Sharpe Ratio)
+
+Sharpe Ratio = Return / Std Dev
+TCS:
+
+Return: 5%
+Std Dev: 1.2%
+Sharpe: 5 / 1.2 = 4.17 (great risk-adjusted return)
+VEDL:
+
+Return: 6%
+Std Dev: 1.67%
+Sharpe: 6 / 1.67 = 3.59 (lower risk-adjusted return)
+Conclusion: TCS gives better return per unit of risk, even though VEDL has higher absolute return.
+
+Can't calculate this without std dev!
+
+Daily returns vs Std dev — when to use which:
+Question	Use This
+Which stock is riskier overall?	Std dev (one number comparison)
+When did the big moves happen?	Daily returns chart (see timing)
+Which stock to buy for safety?	Std dev (lower = safer)
+Did something happen on July 19?	Daily returns chart (see the spike)
+Compare 50 stocks quickly	Std dev (sort by number)
+Understand one stock's behavior	Daily returns chart (see pattern)
+Why ONE number matters:
+For computers/algorithms:
+
+# Sort stocks by risk
+stocks.sort(key=lambda x: x.std_dev)
+Can't sort a chart. Can sort numbers.
+
+For databases/spreadsheets:
+
+Stock       Return    Volatility
+RELIANCE    5.2%      1.32%       ← Store in database
+TCS         8.1%      1.20%
+VEDL        3.4%      1.67%
+Easy to filter: "Show me stocks with volatility < 1.5%"
+
+For communication:
+"TCS has 1.2% volatility" — clear, precise.
+
+"TCS moves around a lot... or maybe not that much..." — vague.
+
+Real-world usage:
+Portfolio managers: Need std dev to build risk models, calculate VaR (Value at Risk), comply with regulations.
+
+Trading algorithms: Use std dev to set stop-loss levels, position sizing.
+
+Financial reports: Show std dev to communicate risk to clients.
+
+Retail investors: Use std dev to compare stocks quickly without analyzing every single day.
+
+The chart is still useful!
+Std dev can't tell you:
+
+Is volatility increasing over time? (chart shows trend)
+Was there one big spike or consistent movement? (chart shows pattern)
+Did stocks move together or independently? (chart shows correlation)
+Best practice: Use BOTH
+Calculate std dev — get the risk number
+Plot daily returns — understand WHY that number exists
+Make decision — based on both insights
+Example workflow:
+
+Step 1: Calculate std dev
+VEDL: 1.67% (highest)
+
+Step 2: Look at chart
+"Oh, VEDL had a huge spike on July 19 — that's why it's risky."
+
+Step 3: Decide
+"I'll avoid VEDL unless I understand what caused that spike."
+Summary:
+Standard deviation = THE NUMBER investors use to measure risk
+
+Why?
+
+✅ One number = easy comparison
+✅ Works in formulas (Sharpe ratio, portfolio optimization)
+✅ Industry standard (everyone uses it)
+✅ Can sort/filter/rank stocks
+✅ Fast decision making
+Daily returns chart = THE CONTEXT behind that number
+
+Why?
+
+✅ See when volatility happened
+✅ Understand patterns
+✅ Spot outliers
+✅ Visual communication
