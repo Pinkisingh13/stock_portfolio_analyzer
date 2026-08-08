@@ -1,4 +1,30 @@
-echo ".venv/
+# Python Backend
+.venv/
 __pycache__/
 *.pyc
-.python-version"
+.python-version
+
+# Flutter Frontend
+frontend/.dart_tool/
+frontend/.packages
+frontend/build/
+frontend/.flutter-plugins
+frontend/.flutter-plugins-dependencies
+frontend/android/.gradle/
+frontend/android/local.properties
+frontend/ios/Pods/
+frontend/ios/.symlinks/
+frontend/.fvm/
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+frontend/lib/view/logs.txt

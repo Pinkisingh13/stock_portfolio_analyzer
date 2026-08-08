@@ -1,0 +1,35 @@
+# UV Commands for Python Development
+
+# Create a new project (without git)
+uv init --no-git my-project
+
+# Navigate into the project
+cd my-project
+
+# Run a Python script (auto-creates .venv)
+uv run python hello.py
+
+# Add a package
+uv add requests
+
+# Remove a package
+uv remove yfinance
+
+# Run a quick one-off script (no project setup needed)
+uv run --script script.py
+
+# Remove git if already initialized
+rm -rf .git
+
+
+# To activate environment: source .venv/bin/activate
+
+#reload uvicorn or run uvicorn
+uv run uvicorn app:app --reload
+
+
+Find your computer's IP:
+
+ipconfig getifaddr en0  # Mac WiFi
+# or
+ifconfig | grep "inet "

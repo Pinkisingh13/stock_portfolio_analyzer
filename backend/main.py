@@ -2,6 +2,7 @@ import yfinance as yf
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as mp
+from fastapi import FastAPI
 
 
 list_of_stocks = ["SBIN.NS", "ICICIBANK.NS", "AXISBANK.NS", "HDFCBANK.NS", "PNB.NS"]
@@ -32,7 +33,7 @@ def plot_daily_returns():
     mp.grid(True, alpha=0.3)
     mp.axhline(y=0, color='black', linestyle='--', linewidth=0.5)
     mp.tight_layout()
-    mp.savefig("daily_returns.png", dpi=300, bbox_inches="tight")
+    # mp.savefig("daily_returns.png", dpi=300, bbox_inches="tight")
     mp.show()
 
 def plot_volatility_chart():
@@ -44,7 +45,7 @@ def plot_volatility_chart():
     mp.ylabel("Daily Volatility (%)")
     mp.grid(True, alpha=0.3)
     mp.tight_layout()
-    mp.savefig("stock_volatility.png", dpi=300, bbox_inches="tight")
+    # mp.savefig("stock_volatility.png", dpi=300, bbox_inches="tight")
     mp.show()
 
 

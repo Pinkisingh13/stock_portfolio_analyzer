@@ -9,5 +9,7 @@ pandas is a Python package that provides fast, flexible, and expressive data str
 - all columns in a Pandas DataFrame must have the same number of rows.
 
 - loc and iloc are two ways to select data from a Pandas DataFrame.
+- loc = select using labels
+- iloc = select using integer positions
 - loc is INCLUSIVE of the stop value.  [start:stop:step]
 - iloc EXCLUSIVE of stop, like normal Python. iloc[start:stop:step]

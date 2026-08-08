@@ -13,8 +13,12 @@ Standard deviation of returns → Volatility.
 Daily Return (%) → What happened on one specific day.
 Standard Deviation (%) → A summary of how much the daily returns fluctuate over many days.
 
+PROFIT & LOSS: How much have I gained/lost on each share × how many shares I own = total profit/loss. ​​profitloss = (cvurent price- buy price) * qyuantity
 
+Profit and loss in percentage: ​​profitlosspercentage = ((curentprice- buyprice)/ buyprice) * qyuantity
 
+ why devided by buy price: Because percentage means "how big is the change compared with where you started?"  
+ for ex: "I made ₹20. How large is ₹20 compared to the money I originally put in? anser: profit / starting investment.
 
 
 ------------------------------------------------------------------------------------------------
