@@ -1,0 +1,64 @@
+
+# August 8, 2026 — Today's Goal
+
+## Goal: Get Phase 1 working end-to-end (basic portfolio analyzer app)
+
+By end of today: User opens Flutter app, enters stocks, hits Analyze, sees portfolio analysis.
+
+---
+
+## Hour 1-2: FastAPI Backend
+
+- Set up FastAPI project
+- Learn FastAPI basics (decorators, endpoints, JSON responses)
+- Create POST /analyze endpoint
+- Accepts: list of stocks with name, quantity, buy price
+- Returns: current price, profit/loss, daily return, volatility, portfolio summary
+- Use existing Python knowledge (yfinance, Pandas, pct_change, std)
+
+## Hour 3: Test the API
+
+- Test endpoints in browser (FastAPI auto-generates docs at /docs)
+- Verify JSON response is correct
+- Handle errors (invalid stock symbol, empty data)
+
+## Hour 4-5: Flutter Frontend
+
+- Create new Flutter app
+- Screen 1: Enter stocks (stock name, quantity, buy price)
+- Screen 2: Display analysis results
+  - Total portfolio value
+  - Total profit/loss
+  - Per stock breakdown
+  - Volatility per stock
+  - Best and worst performer
+
+## Hour 6: Connect and Polish
+
+- Flutter calls FastAPI (HTTP request)
+- Display real calculated data
+- Basic styling and layout
+
+---
+
+## What we are building today:
+
+Flutter app → HTTP request → FastAPI (Python) → yfinance + Pandas → JSON response → Flutter displays
+
+---
+
+## What we are NOT doing today:
+
+- No file upload (CSV/Excel) — later
+- No fancy charts — just text and numbers
+- No advanced metrics (Sharpe, Beta) — Phase 2
+- No deployment — runs locally only
+- No authentication
+
+---
+
+## End result:
+
+A working full-stack app where user enters their stock holdings
+and gets back real-time portfolio analysis including profit/loss,
+returns, and risk metrics.

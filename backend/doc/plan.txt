@@ -1,0 +1,219 @@
+
+# STOCK PORTFOLIO ANALYZER — PROJECT PLAN
+
+## Overview
+
+A full-stack portfolio analyzer where users upload their investment data (CSV/Excel) or enter manually.
+Python backend analyzes the portfolio in real-time.
+Flutter frontend displays complete analysis with charts.
+
+Tech Stack: Flutter (frontend) + FastAPI (Python backend) + yfinance + Pandas + NumPy
+
+---
+
+## INPUT METHODS
+
+Phase 1: CSV + XLSX + Manual entry
+Phase 2: PDF support (table parser)
+Phase 3: Image support (Groww/Zerodha screenshots via Claude Vision API)
+
+---
+
+## PHASE 1: Core Portfolio Analysis (Basics)
+
+### Portfolio Overview:
+- Total investment value (what you put in)
+- Current portfolio value (what it's worth now)
+- Total profit/loss (absolute in rupees)
+- Total profit/loss (percentage)
+- Portfolio CAGR (Compound Annual Growth Rate)
+
+### Per Stock Analysis:
+- Current price
+- Buy price vs current price
+- Profit/loss per stock (rupees and percentage)
+- Weight in portfolio (what percentage of your portfolio is this stock)
+- Daily return
+- Monthly return
+
+### Risk Metrics:
+- Daily volatility (standard deviation) per stock
+- Portfolio volatility (overall risk)
+- Best performer
+- Worst performer
+
+### Charts:
+- Portfolio value over time (line chart)
+- Profit/loss per stock (bar chart)
+- Volatility comparison (bar chart)
+- Daily returns (line chart)
+- Portfolio allocation (pie chart — how much percentage in each stock)
+
+---
+
+## PHASE 2: Advanced Risk Analysis
+
+### Risk Metrics:
+- Sharpe Ratio (return per unit of risk)
+- Sortino Ratio (like Sharpe but only penalizes downside risk)
+- Maximum Drawdown (biggest drop from peak to bottom)
+- Value at Risk (VaR) — 95% chance you won't lose more than X% in a day
+- Beta (how much your stock moves compared to NIFTY50)
+- Alpha (excess return above the market)
+
+### Correlation Analysis:
+- Correlation matrix (which stocks move together)
+- Diversification score (are your stocks too similar?)
+- Heatmap visualization
+
+### Moving Averages:
+- 20-day SMA (Simple Moving Average)
+- 50-day SMA
+- 200-day SMA
+- Golden Cross / Death Cross signals (SMA20 crosses SMA50)
+- EMA (Exponential Moving Average)
+
+### Charts:
+- Correlation heatmap
+- Drawdown chart
+- Risk vs return scatter plot (each stock as a dot)
+- Moving averages overlaid on price chart
+
+---
+
+## PHASE 3: Technical Indicators (Traders Use These)
+
+### Momentum Indicators:
+- RSI (Relative Strength Index) — overbought/oversold
+- MACD (Moving Average Convergence Divergence) — trend direction
+- Stochastic Oscillator — momentum reversals
+- Williams %R — overbought/oversold
+- Rate of Change (ROC)
+
+### Volatility Indicators:
+- Bollinger Bands (price channel based on standard deviation)
+- ATR (Average True Range) — daily volatility in rupees
+- Keltner Channels
+
+### Volume Indicators:
+- OBV (On-Balance Volume) — volume confirms price trend
+- Volume Weighted Average Price (VWAP)
+- Accumulation/Distribution Line
+
+### Trend Indicators:
+- ADX (Average Directional Index) — trend strength
+- Parabolic SAR — trend reversal points
+- Ichimoku Cloud — support/resistance/trend
+
+### Charts:
+- Candlestick charts with indicators overlaid
+- RSI chart (with 30/70 lines)
+- MACD histogram
+- Bollinger Bands on price chart
+- Volume bars below price chart
+
+---
+
+## PHASE 4: Portfolio Optimization (Quant Finance)
+
+### Modern Portfolio Theory:
+- Efficient Frontier (best return for given risk level)
+- Optimal portfolio allocation (how much percentage to put in each stock)
+- Minimum variance portfolio (lowest risk combination)
+- Maximum Sharpe portfolio (best risk-adjusted return)
+
+### Backtesting:
+- If you invested 1,00,000 one year ago, what would it be worth?
+- Compare your portfolio vs NIFTY50
+- Compare your portfolio vs fixed deposit
+- Historical performance simulation
+
+### Monte Carlo Simulation:
+- Simulate 10,000 possible future scenarios
+- Probability of profit/loss
+- Expected range of returns
+
+### Sector Analysis:
+- Sector-wise allocation (Banking 40%, IT 30%, Energy 30%)
+- Sector performance comparison
+- Over/under exposure warnings
+
+### Charts:
+- Efficient frontier curve
+- Monte Carlo simulation fan chart
+- Portfolio vs benchmark comparison
+- Sector allocation pie chart
+
+---
+
+## PHASE 5: AI-Powered Features (Agents + RAG)
+
+### AI Analysis:
+- Natural language portfolio summary
+  ("Your portfolio is 60% banking stocks, making it vulnerable to interest rate changes")
+- News sentiment analysis (scan news for your stocks, positive/negative)
+- Earnings analysis (upcoming earnings dates, expected impact)
+- AI-generated buy/sell recommendations with reasoning
+
+### Screenshot Import:
+- Upload Groww/Zerodha screenshot
+- Claude Vision extracts stock data
+- Auto-builds portfolio from image
+
+### RAG on Financial Reports:
+- Upload annual reports
+- Ask questions ("What was TCS revenue growth?")
+- AI answers from the document
+
+### Alerts:
+- SBIN crossed its 200-day moving average
+- Your portfolio drawdown exceeded 10%
+- RSI for RELIANCE is above 70 (overbought)
+
+---
+
+## PHASE 6: Social/Community Features
+
+### Comparison:
+- Compare your portfolio vs friends
+- Leaderboard (anonymous)
+- Compare vs popular investors' portfolios
+
+### Export:
+- PDF report generation
+- Email weekly summary
+- Share analysis on social media
+
+---
+
+## WHAT TRADERS/INVESTORS RELY ON MOST:
+
+1. Sharpe Ratio — number 1 metric for portfolio quality
+2. Maximum Drawdown — biggest risk concern
+3. RSI + MACD — most popular trading signals
+4. Bollinger Bands — volatility-based trading
+5. Correlation — diversification check
+6. Beta — market sensitivity
+7. Moving Averages — trend direction
+
+---
+
+## DIFFICULTY BY PHASE:
+
+Phase 1: Easy (basic calculations, you already know most of this)
+Phase 2: Medium (new formulas, correlation math)
+Phase 3: Medium (many indicators, but formulas are available)
+Phase 4: Hard (portfolio theory, optimization algorithms)
+Phase 5: Medium-Hard (AI APIs, vision, RAG pipelines)
+Phase 6: Easy-Medium (frontend features, export logic)
+
+---
+
+## MUTUAL FUND SUPPORT (can be added in any phase):
+
+- NAV data (mftool library or AMFI website)
+- SIP returns calculator
+- CAGR calculation
+- Fund comparison
+- Stock vs mutual fund performance
+- Category-wise analysis (large cap, mid cap, small cap, debt)
