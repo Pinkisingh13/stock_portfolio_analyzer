@@ -42,6 +42,40 @@ class ApiService {
     }
   }
 
+  Future<List<MultiStockItemModel>?> analyzeMultipleStocks({
+    required List<String> stockNames,
+    required List<double> prices,
+    required List<int> quantities,
+  }) async {
+    try {
+      final url = Uri.parse('$baseUrl/analyze/multiple-stock');
+
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'stocksname': stockNames,
+          'price': prices,
+          'quantity': quantities,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final jsonData = jsonDecode(response.body) as List;
+        return jsonData
+            .map((item) => MultiStockItemModel.fromJson(item))
+            .toList();
+      } else {
+        log('Error: ${response.statusCode}');
+        log('Response: ${response.body}');
+        return null;
+      }
+    } catch (e) {
+      log('Exception occurred: $e');
+      return null;
+    }
+  }
+
   Future<bool> testConnection() async {
     try {
       final url = Uri.parse('$baseUrl/');
@@ -50,6 +84,40 @@ class ApiService {
     } catch (e) {
       log('Connection test failed: $e');
       return false;
+    }
+  }
+
+  Future<List<MultiStockItemModel>?> refreshPrices({
+    required List<String> stockNames,
+    required List<double> buyPrices,
+    required List<int> quantities,
+  }) async {
+    try {
+      final url = Uri.parse('$baseUrl/api/refresh-prices');
+
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'symbols': stockNames,
+          'buy_prices': buyPrices,
+          'quantities': quantities,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final jsonData = jsonDecode(response.body) as List;
+        return jsonData
+            .map((item) => MultiStockItemModel.fromJson(item))
+            .toList();
+      } else {
+        log('Error: ${response.statusCode}');
+        log('Response: ${response.body}');
+        return null;
+      }
+    } catch (e) {
+      log('Exception occurred: $e');
+      return null;
     }
   }
 }

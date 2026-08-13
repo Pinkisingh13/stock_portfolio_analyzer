@@ -32,16 +32,13 @@ class CircularGaugeWidget extends StatefulWidget {
 }
 
 class _CircularGaugeWidgetState extends State<CircularGaugeWidget> {
-  // Design colors matching Figma
-  static const Color primaryBlue = Color(0xFF1D8DFD); // Track & progress color
-  static const Color mvOrange = Color(0xFFFF5A00); // MV value, text, and pointer
-  static const Color lightBlue = Color(0xFFE6EFF8);
-  static const Color textDark = Color(0xFF333333);
-  static const Color hclLclPink = Color(0xFFE91E63); // HCL/LCL marker & label color
-  static const Color textGrey = Color(0xFF666666);
-  static const Color markerYellow = Color(0xFFFFB800);
+
+  static const Color mvOrange = Color(0xFFFF5A00);  
+
+  static const Color hclLclPink = Color(0xFFE91E63); 
+
   static const Color markerGreen = Color(0xFF16A34A);
-  static const Color specRed = Color(0xFF2563EB); // Royal Blue — High/Low Spec color
+  static const Color specRed = Color(0xFF2563EB); 
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +67,7 @@ class _CircularGaugeWidgetState extends State<CircularGaugeWidget> {
         .clamp(0.0, 95.0);
 
     // Calculate normalized Low Spec value (0-100 range)
-    final normalizedLowSpec = ((widget.lowSpecValue - widget.minValue) /
+    ((widget.lowSpecValue - widget.minValue) /
             (widget.maxValue - widget.minValue) *
             100)
         .clamp(0.0, 100.0);
@@ -97,8 +94,7 @@ class _CircularGaugeWidgetState extends State<CircularGaugeWidget> {
           children: [
             //! Main Syncfusion Radial Gauge
             SizedBox(
-              // width: 296,
-              // height: 240,
+          
               child: SfRadialGauge(
                 enableLoadingAnimation: true,
                 animationDuration: 800,

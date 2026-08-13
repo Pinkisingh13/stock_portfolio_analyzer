@@ -161,3 +161,16 @@ Why?
 ✅ Understand patterns
 ✅ Spot outliers
 ✅ Visual communication
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+| Condition          | What it means                                           | General indication            |
+| ------------------ | ------------------------------------------------------- | ----------------------------- |
+| **Price > SMA20**  | Current price is above recent 20-day average            | Short-term strength           |
+| **Price < SMA20**  | Current price is below recent 20-day average            | Short-term weakness           |
+| **SMA20 > SMA50**  | Recent prices are stronger than the medium-term average | Bullish/positive momentum     |
+| **SMA20 < SMA50**  | Recent prices are weaker than the medium-term average   | Bearish/negative momentum     |
+| **SMA50 > SMA200** | Medium-term trend is above long-term trend              | Longer-term bullish structure |
+| **SMA50 < SMA200** | Medium-term trend is below long-term trend              | Longer-term bearish structure |

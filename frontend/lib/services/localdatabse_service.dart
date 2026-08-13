@@ -24,4 +24,47 @@ Future<List<StockAnalysisResponseModel>> getHistory() async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
     await pref.remove("history");
   }
+
+  Future<void> saveWithTimestamp(StockAnalysisResponseModel report, DateTime timestamp) async {
+    final pref = await SharedPreferences.getInstance();
+    final data = report.toJson();
+    data['live_timestamp'] = timestamp.toIso8601String();
+    await pref.setString('live_report_${report.stockName}', jsonEncode(data));
+  }
+
+  Future<DateTime?> getLastUpdateTimestamp(String stockName) async {
+    final pref = await SharedPreferences.getInstance();
+    final data = pref.getString('live_report_$stockName');
+    if (data == null) return null;
+    final json = jsonDecode(data);
+    if (json['live_timestamp'] == null) return null;
+    return DateTime.parse(json['live_timestamp']);
+  }
+
+  Future<void> saveMultiStockWithTimestamp(List<MultiStockItemModel> stocks, DateTime timestamp) async {
+    final pref = await SharedPreferences.getInstance();
+    final data = stocks.map((s) => {
+      'Stock Name': s.stockName,
+      'Current Price': s.currentPrice,
+      'Bought Price': s.boughtPrice,
+      'Quantity': s.quantity,
+      'Profit Loss': s.profitLoss,
+      'PL Percentage': s.profitLossPercentage,
+      'Current Value': s.currentValue,
+      'Portfolio Weight': s.portfolioWeight,
+    }).toList();
+    await pref.setString('live_multi_stock', jsonEncode({
+      'stocks': data,
+      'live_timestamp': timestamp.toIso8601String(),
+    }));
+  }
+
+  Future<DateTime?> getMultiStockLastUpdateTimestamp() async {
+    final pref = await SharedPreferences.getInstance();
+    final data = pref.getString('live_multi_stock');
+    if (data == null) return null;
+    final json = jsonDecode(data);
+    if (json['live_timestamp'] == null) return null;
+    return DateTime.parse(json['live_timestamp']);
+  }
 }

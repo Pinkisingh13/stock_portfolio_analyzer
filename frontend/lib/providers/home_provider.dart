@@ -9,6 +9,7 @@ class HomeProvider extends ChangeNotifier {
   final apiservice = ApiService();
   final localDb = SharedPreferenceService();
   StockAnalysisResponseModel? stockData;
+  List<MultiStockItemModel>? multiStockData;
   List<StockAnalysisResponseModel> history = [];
   bool isLoading = false;
 
@@ -37,6 +38,38 @@ class HomeProvider extends ChangeNotifier {
       isLoading = false;
       notifyListeners();
     }
+  }
+
+  // multiple stock data
+  Future<void> callanalyzeMultipleStocks(
+    List<String> stockNames,
+    List<double> prices,
+    List<int> quantities,
+  ) async {
+    try {
+      isLoading = true;
+      notifyListeners();
+      final result = await apiservice.analyzeMultipleStocks(
+        stockNames: stockNames,
+        prices: prices,
+        quantities: quantities,
+      );
+      if (result != null) {
+        multiStockData = result;
+      } else {
+        log('Failed to fetch multi-stock data.');
+      }
+    } catch (e) {
+      log(e.toString());
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  void clearMultiStockData() {
+    multiStockData = null;
+    notifyListeners();
   }
 
   // Save current report to history

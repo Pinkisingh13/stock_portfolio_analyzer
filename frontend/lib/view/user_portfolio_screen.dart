@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:frontend/providers/home_provider.dart';
@@ -13,6 +14,97 @@ class UserPortfolioScreen extends StatefulWidget {
 }
 
 class _UserPortfolioScreenState extends State<UserPortfolioScreen> {
+  bool _isLiveMode = false;
+  Timer? _liveTimer;
+  Timer? _countdownTimer;
+  DateTime? _lastUpdated;
+  int _nextUpdateSeconds = 900;
+
+  @override
+  void dispose() {
+    _liveTimer?.cancel();
+    _countdownTimer?.cancel();
+    super.dispose();
+  }
+
+  void _goLive() async {
+    final homeProvider = Provider.of<HomeProvider>(context, listen: false);
+    final stockData = homeProvider.stockData;
+    if (stockData == null) return;
+
+    final lastUpdate = await homeProvider.localDb.getLastUpdateTimestamp(stockData.stockName);
+    final now = DateTime.now();
+
+    if (lastUpdate == null || now.difference(lastUpdate).inMinutes >= 15) {
+      await _fetchAndUpdate();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Using recent data. Next update in ${15 - now.difference(lastUpdate).inMinutes} min')),
+      );
+      setState(() {
+        _lastUpdated = lastUpdate;
+        _nextUpdateSeconds = 900 - now.difference(lastUpdate).inSeconds;
+      });
+    }
+
+    setState(() => _isLiveMode = true);
+
+    _liveTimer = Timer.periodic(const Duration(minutes: 15), (_) async {
+      await _fetchAndUpdate();
+    });
+
+    _countdownTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (_nextUpdateSeconds > 0) {
+        setState(() => _nextUpdateSeconds--);
+      } else {
+        setState(() => _nextUpdateSeconds = 900);
+      }
+    });
+  }
+
+  void _stopLive() {
+    _liveTimer?.cancel();
+    _countdownTimer?.cancel();
+    setState(() {
+      _isLiveMode = false;
+      _nextUpdateSeconds = 900;
+    });
+  }
+
+  Future<void> _fetchAndUpdate() async {
+    final homeProvider = Provider.of<HomeProvider>(context, listen: false);
+    final stockData = homeProvider.stockData;
+    if (stockData == null) return;
+
+    final freshData = await homeProvider.apiservice.refreshPrices(
+      stockNames: [stockData.stockName],
+      buyPrices: [stockData.userBoughtPrice],
+      quantities: [stockData.quantity],
+    );
+
+    if (freshData != null && freshData.isNotEmpty) {
+      final updated = freshData.first;
+      final now = DateTime.now();
+
+      await homeProvider.localDb.saveMultiStockWithTimestamp([updated], now);
+
+      setState(() {
+        _lastUpdated = now;
+        _nextUpdateSeconds = 900;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Updated ${now.toString().substring(11, 16)}')),
+      );
+    }
+  }
+
+  String _formatCountdown(int seconds) {
+    final minutes = seconds ~/ 60;
+    final secs = seconds % 60;
+    return '${minutes.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}';
+  }
+
   @override
   Widget build(BuildContext context) {
     final homeProvider = Provider.of<HomeProvider>(context);
@@ -60,13 +152,13 @@ class _UserPortfolioScreenState extends State<UserPortfolioScreen> {
           ),
           actions: [
             Container(
-              margin: EdgeInsets.only(right: 8),
+              margin: const EdgeInsets.only(right: 8),
               child: ElevatedButton.icon(
-                onPressed: () {},
+                onPressed: _isLiveMode ? _stopLive : _goLive,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF27283E),
-                  foregroundColor: const Color(0xFFE1E0FE),
-                  side: const BorderSide(color: Color(0xFF4C4353)),
+                  backgroundColor: _isLiveMode ? const Color(0xFF10B981) : const Color(0xFF27283E),
+                  foregroundColor: Colors.white,
+                  side: BorderSide(color: _isLiveMode ? const Color(0xFF10B981) : const Color(0xFF4C4353)),
                   padding: const EdgeInsets.symmetric(
                     horizontal: 12,
                     vertical: 12,
@@ -75,10 +167,10 @@ class _UserPortfolioScreenState extends State<UserPortfolioScreen> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                icon: const Icon(Icons.download, size: 16),
-                label: const Text(
-                  'EXPORT',
-                  style: TextStyle(
+                icon: Icon(_isLiveMode ? Icons.stop : Icons.wifi, size: 16),
+                label: Text(
+                  _isLiveMode ? 'STOP' : 'GO LIVE',
+                  style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 1,
@@ -112,7 +204,67 @@ class _UserPortfolioScreenState extends State<UserPortfolioScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                   
+                    if (_isLiveMode)
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        margin: const EdgeInsets.only(bottom: 16),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF10B981).withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: const Color(0xFF10B981).withValues(alpha: 0.3)),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.wifi, color: Color(0xFF10B981), size: 16),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    'Live Mode ON',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                      color: Color(0xFF10B981),
+                                    ),
+                                  ),
+                                  Text(
+                                    _lastUpdated != null
+                                        ? 'Updated: ${DateTime.now().difference(_lastUpdated!).inMinutes} min ago'
+                                        : 'Fetching...',
+                                    style: const TextStyle(
+                                      fontSize: 10,
+                                      color: Color(0xFFCFC2D5),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  'Next: ${_formatCountdown(_nextUpdateSeconds)}',
+                                  style: const TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w600,
+                                    color: Color(0xFFE1E0FE),
+                                  ),
+                                ),
+                                const Text(
+                                  'Data ~15-20 min delayed',
+                                  style: TextStyle(
+                                    fontSize: 9,
+                                    color: Color(0xFF988D9E),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+
 
                     // Top Grid: Gauge & Key Metrics
                     Column(
@@ -160,6 +312,10 @@ class _UserPortfolioScreenState extends State<UserPortfolioScreen> {
                         ),
                       ],
                     ),
+                    const SizedBox(height: 20),
+
+                    // Trend Analysis Card
+                    _buildTrendCard(stockData),
                     const SizedBox(height: 20),
 
                     // Line Chart Card
@@ -652,6 +808,138 @@ class _UserPortfolioScreenState extends State<UserPortfolioScreen> {
         ],
       ),
     );
+  }
+
+  Widget _buildTrendCard(stockData) {
+    return _buildGlassContainer(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'TREND ANALYSIS',
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 1.2,
+              color: Color(0xFFCFC2D5),
+            ),
+          ),
+          const SizedBox(height: 20),
+
+          // Short term
+          _buildTrendRow(
+            'Short Term',
+            stockData.shortTerm,
+            _getTrendColor(stockData.shortTerm),
+          ),
+          const SizedBox(height: 12),
+
+          // Momentum
+          _buildTrendRow(
+            'Momentum',
+            stockData.momentum,
+            _getTrendColor(stockData.momentum),
+          ),
+          const SizedBox(height: 12),
+
+          // Long term
+          _buildTrendRow(
+            'Long Term',
+            stockData.longTerm,
+            _getTrendColor(stockData.longTerm),
+          ),
+          const SizedBox(height: 20),
+
+          // SMA values
+          Row(
+            children: [
+              Expanded(
+                child: _buildSMABox('SMA20', stockData.sma20),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _buildSMABox('SMA50', stockData.sma50),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _buildSMABox('SMA200', stockData.sma200),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTrendRow(String label, String value, Color color) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 13,
+            color: Color(0xFFCFC2D5),
+          ),
+        ),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.15),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Text(
+            value,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: color,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSMABox(String label, double value) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: const Color(0xFF191A2F).withOpacity(0.5),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 11,
+              color: Color(0xFF988D9E),
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            '₹${value.toStringAsFixed(2)}',
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: Color(0xFFE1E0FE),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Color _getTrendColor(String trend) {
+    if (trend.toLowerCase().contains('bullish') ||
+        trend.toLowerCase().contains('strength')) {
+      return const Color(0xFF10B981);
+    } else if (trend.toLowerCase().contains('bearish') ||
+        trend.toLowerCase().contains('weakness')) {
+      return const Color(0xFFEF4444);
+    }
+    return const Color(0xFFEAB308);
   }
 
   Widget _buildChartTab(String label, bool isSelected) {
